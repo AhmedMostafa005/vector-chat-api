@@ -176,6 +176,23 @@ Please provide a helpful response based on the context above."""
     )
 
 
+@app.get("/setup-db")
+async def setup_db():
+  from create_user import create_user
+  from init_db import init_database
+
+  try:
+    await init_database()
+    test_user_id = await create_user("Interviewer Test User")
+    return {
+        "status": "success",
+        "message": "Database initialized and user created successfully!",
+        "test_user_id": test_user_id,
+    }
+  except Exception as e:
+    raise HTTPException(status_code=500, detail=str(e))
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
